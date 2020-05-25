@@ -2,12 +2,22 @@ import Foundation
 
 class DiceViewModel {
     private var cards: [Int] = []
-    var totalCount = 0
-    var currentCard = 0
+    private let players: [String]
+    private var totalCount = 0
+    private var currentCard = 0
+    private var currentPlayer = 0
+    private var rolled = false
+
     var rollLabelText = "Tap to roll"
     var countLabelText = "Roll count: 0"
+    var turnText = ""
 
-    init() {
+    init(players: [String]) {
+        if (players.count < 2) {
+            fatalError("At least two players must play.")
+        }
+        self.players = players
+        turnText = "\(players[currentPlayer])'s turn"
         refreshCards()
     }
 
@@ -15,11 +25,36 @@ class DiceViewModel {
         if (currentCard == cards.count) {
             refreshCards()
         }
-        rollLabelText = "\(cards[currentCard])"
-        currentCard = currentCard + 1
-        totalCount = totalCount + 1
-        countLabelText = "Roll count: \(totalCount)"
+
+        updateRollOutcome()
+        updateRollCount()
+        updatePlayer()
+        rolled = !rolled
+
         callback()
+    }
+
+    func updateRollOutcome() {
+        if (rolled) {
+            rollLabelText = "Tap to roll"
+        } else {
+            rollLabelText = "\(cards[currentCard])"
+            currentCard = currentCard + 1
+        }
+    }
+    
+    func updateRollCount() {
+        if (!rolled) {
+            totalCount = totalCount + 1
+            countLabelText = "Roll count: \(totalCount)"
+        }
+    }
+    
+    func updatePlayer() {
+        if (rolled) {
+            turnText = "\(players[currentPlayer])'s turn"
+            currentPlayer = (currentPlayer + 1) % players.count
+        }
     }
 
     func refreshCards() {

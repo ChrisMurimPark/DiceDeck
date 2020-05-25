@@ -20,6 +20,15 @@ class DiceViewController: UIViewController {
         return textLabel
     }()
 
+    lazy var turnLabel: UILabel = {
+        let textLabel = UILabel()
+        textLabel.textColor = .white
+        textLabel.font = textLabel.font.withSize(24)
+        textLabel.textAlignment = NSTextAlignment.center
+        textLabel.text = self.viewModel.turnText
+        return textLabel
+    }()
+
     let viewModel: DiceViewModel
 
     init(viewModel: DiceViewModel) {
@@ -32,10 +41,14 @@ class DiceViewController: UIViewController {
     }
 
     override func loadView() {
-        let rootView = UIStackView(arrangedSubviews: [countLabel, rollOutcomeLabel])
+        let topBarStackView = UIStackView(arrangedSubviews: [turnLabel, countLabel])
+        topBarStackView.axis = .horizontal
+        topBarStackView.distribution = .fillProportionally
+
+        let rootView = UIStackView(arrangedSubviews: [topBarStackView, rollOutcomeLabel])
         rootView.axis = NSLayoutConstraint.Axis.vertical
         rootView.isUserInteractionEnabled = true
-        rootView.distribution = UIStackView.Distribution.fillProportionally
+        rootView.distribution = .fillProportionally
         rootView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(self.tapped)))
 
         view = rootView
@@ -48,5 +61,6 @@ class DiceViewController: UIViewController {
     func updateView() {
         rollOutcomeLabel.text = viewModel.rollLabelText
         countLabel.text = viewModel.countLabelText
+        turnLabel.text = viewModel.turnText
     }
 }
