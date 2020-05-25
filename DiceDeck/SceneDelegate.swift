@@ -9,57 +9,6 @@
 import UIKit
 import SwiftUI
 
-class DiceViewController: UIViewController {
-    lazy var mainLabel: UILabel = {
-        let textLabel = UILabel()
-        textLabel.text = "Tap to roll"
-        textLabel.textColor = UIColor.white
-        textLabel.font = textLabel.font.withSize(36)
-        textLabel.textAlignment = NSTextAlignment.center
-        return textLabel
-    }()
-
-    lazy var countLabel: UILabel = {
-        let textLabel = UILabel()
-        textLabel.text = "Roll count: 0"
-        textLabel.textColor = UIColor.white
-        textLabel.font = textLabel.font.withSize(24)
-        textLabel.textAlignment = NSTextAlignment.center
-        return textLabel
-    }()
-
-    var cards: [Int] = []
-    var totalCount = 0
-    var currentCard = 0
-
-    override func loadView() {
-        let rootView = UIStackView(arrangedSubviews: [countLabel, mainLabel])
-        rootView.axis = NSLayoutConstraint.Axis.vertical
-        rootView.isUserInteractionEnabled = true
-        rootView.distribution = UIStackView.Distribution.fillEqually
-        rootView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(self.tapped)))
-
-        view = rootView
-        refreshCards()
-    }
-
-    @objc func tapped() {
-        if (currentCard == cards.count) {
-            refreshCards()
-        }
-        mainLabel.text = "\(cards[currentCard])"
-        currentCard = currentCard + 1
-        totalCount = totalCount + 1
-        countLabel.text = "Roll count: \(totalCount)"
-    }
-
-    func refreshCards() {
-        cards = [2, 3, 3, 4, 4, 4, 5, 5, 5, 5, 6, 6, 6, 6, 6, 7, 7, 7, 7, 7, 7, 8, 8, 8, 8, 8, 9, 9, 9, 9, 10, 10, 10, 11, 11, 12]
-        cards.shuffle()
-        currentCard = 0
-    }
-}
-
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
     var window: UIWindow?
@@ -75,8 +24,9 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         // Use a UIHostingController as window root view controller.
         if let windowScene = scene as? UIWindowScene {
             let window = UIWindow(windowScene: windowScene)
-            let dice = DiceViewController()
-            window.rootViewController = dice
+            let diceViewModel = DiceViewModel()
+            let diceViewController = DiceViewController(viewModel: diceViewModel)
+            window.rootViewController = diceViewController
 
             self.window = window
             window.makeKeyAndVisible()
